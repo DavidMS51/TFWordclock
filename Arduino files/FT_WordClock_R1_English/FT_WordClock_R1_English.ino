@@ -106,7 +106,7 @@ void setup() {
   Serial.begin(9600);
 
   Serial.println("Tempus Fugit WordClock Application ENGLISH Version");
-  Serial.println("Initialiing....");
+  Serial.println("Initializing....");
   Serial.println();
 
 
@@ -142,14 +142,14 @@ void setup() {
 
   if (! RTC.isrunning()) {
     Serial.println("RTC is NOT running!");
-    Serial.println("will set RTC to original compile time");
+    Serial.println("Will set RTC to original compile time.");
     // display Error message on display
     lc.setColumn(0, 2, B00101010); // display E E E
     delay(1000);
 
     // following line sets the RTC to the date & time this sketch was compiled
     RTC.adjust(DateTime(__DATE__, __TIME__));
-    Serial.println("RTC Time set");
+    Serial.println("RTC Time set.");
   }
 
   // display INT for 1 second
@@ -170,7 +170,7 @@ void setup() {
       lc.setRow(0, count, 1 << count);
       delay(500);
       if (digitalRead(button2) == HIGH || digitalRead(button3) == HIGH) {
-        Serial.println("RTC update ABORTED");
+        Serial.println("RTC update ABORTED.");
         Serial.println();
         count = 9999;     // force count to invalid number
       }
@@ -178,7 +178,7 @@ void setup() {
     // if button held down for complete time update RTC
     if (count == 8) {
       RTC.adjust(DateTime(__DATE__, __TIME__));
-      Serial.println("RTC Time reset to complile time");
+      Serial.println("RTC Time reset to compile time.");
       lc.clearDisplay(0);   // clear display
       // wait for buttons to be released
       while (digitalRead(button2) == LOW || digitalRead(button3) == LOW)
