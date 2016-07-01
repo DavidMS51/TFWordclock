@@ -13,5 +13,5 @@ Wordclockrx.py and timewrdxca.py must be in the same directory
 
 where x is the current revison code
 
-Wordclock2x.py
-timewrd3ca.py
+Wordclock3x.py
+timewrd4ca.py
