@@ -18,11 +18,11 @@ and 3 = 90 counter-clockwise (default: 0)
 
 Notes:
 
-German version not implimented in r3 version
+German version not implementedin r3 version
 
 Wordclockrx.py and timewrdxca.py must be in the same directory
 
-where x is the current revison code
+where x is the current revision code
 
 Wordclockr3.py
 timewrd4ca.py
