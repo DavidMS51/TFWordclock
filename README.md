@@ -4,7 +4,7 @@ Repository for Tempus Fugit WordClock s/w and build instructions
 Usage: Wordclockr5.py [-h] [-b bklopt]  [{English,French,Dutch,German}]
  
 positional arguments:
-  {English,French,Dutch,German}    -ONLY ENGLISH CURRENTLY AVAILABLE IN REV5 CODE
+  {English,French,Dutch,German}   [German not current available]
                         Language: English, French, Dutch or German (default:English)
 optional arguments:
   -h, --help            show this help message and exit
@@ -15,7 +15,7 @@ optional arguments:
 
 Notes:
 
-Frech, Dutch and German versions not currently implemented in r5 version
+German version not currently implemented
 
 Rev 5
 Language handling change for rev 5 - see python code

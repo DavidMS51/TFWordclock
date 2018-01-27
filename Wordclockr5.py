@@ -20,7 +20,7 @@
 #       this is not compatable with earlier vesions using the max7219 which is 
 #       if effectcivly obsolete from Dec 2017
 # 
-#       each language now has it's own timewrd file in the format timewrd5ca_eng.py 
+#       each language now has it's own timewrd file in the format timewrd5ca_eng.py (_fr or _du)
 #       this avoids things getting too ungainly and also makes it eaiser
 #       to add support for other display in the future
 #       
@@ -33,9 +33,8 @@
 #
 #
 # --- display rotation  - this is now controlled by setting the variable 'rotation' in timewrd5
-# --- only english support currently - can add French and Dutch if there is interest
 # --- blink to indicate time within 5 minute incruments - no plans to re-impliment
-# --- the various warning are not impliemented as 'count downs' rather than moving bars
+# --- the various warnings are impliemented as 'count downs' rather than moving bars
 # --- Note  blink options do not work with Pi3 because of the way the status led implimented
 
 
@@ -82,28 +81,22 @@ if args.language == "English":
 
 
 
-#---
-#for emulator use comment out the above and uncomment the below
-#from timewrd5ca_eng_e  import DMS_wrdck as DMS_wrdck
-#
-#Also comment out all references to args
-#---
 
-#These are not currently avaialble
+elif args.language == "French":
+	from timewrd5ca_fr  import DMS_wrdck as DMS_wrdck
 
-#elif args.language == "French":
-#	from timewrd5ca_fr  import DMS_wrdck as DMS_wrdck
-#
-#elif args.language == "Dutch":
-#        from timewrd5ca_du  import DMS_wrdck as DMS_wrdck
+elif args.language == "Dutch":
+        from timewrd5ca_du  import DMS_wrdck as DMS_wrdck
+
+# German never impliemented but easy to add 
 #
 #elif args.language == "German":
 #        from timewrd5ca_ger  import DMS_wrdck as DMS_wrdck
 
 
-#else:
-#	print "Invalid language extension " , mod_ext , " not found"
-#	sys.exit() 
+else:
+	print "Invalid language extension " , mod_ext , " not found"
+	sys.exit() 
 
 # Set up class access
 wrdck = DMS_wrdck()
@@ -165,7 +158,7 @@ def readbright():
 			bl_lev = 15 
 		f_dat.close()
                 print
-                print "Bright limit file read ok",
+		print "Bright limit file read ok",
 
 	except: 		# Error reading, default to max level
 		print
@@ -235,7 +228,9 @@ def demo():
 
 	while cur_time_min < 60:
 		wrdck.ckdisp(cur_time_min,cur_time_hr)
+#		temp = raw_input(next)	#debug only
 		cur_time_min = cur_time_min +1
+		print cur_time_min
 		sleep(.3)
 
 	# Then hours
@@ -244,7 +239,9 @@ def demo():
 
 	while cur_time_hr < 13:
 		wrdck.ckdisp(cur_time_min,cur_time_hr)
+#		temp = raw_input(next)   #debug only
 		cur_time_hr=cur_time_hr+1
+		print cur_time_hr
 		sleep(1.2)
 
 	# Both, run forever
@@ -254,7 +251,7 @@ def demo():
 
 
 	while True:
-		wrdck.ckdisp(cur_time_min,cur_time_hr)
+		wrdck.ckdisp(cur_time_min,cur_time_hr,'T')
 		cur_time_min=cur_time_min+1
 		if cur_time_min == 60:
 			cur_time_min = 0
@@ -347,6 +344,7 @@ def prog_term(bl_lev):
 
 # Allows time to be locally set and RTC hardware clock to updated with new local time
 # Only sets hours and minutes. Date is not modifiable locally
+# Most likey will not work if you have an internet connection
 def tset():
 	cur_time_hrt =int(datetime.now().strftime('%I'))  # These are local variables, so need redefining
         cur_time_mint=int(datetime.now().strftime('%M'))
@@ -515,40 +513,30 @@ cur_time_hr  = int(datetime.now().strftime('%H'))
 cur_time_min = int(datetime.now().strftime('%M'))
 Max_br = setbright(range)
 
-
-minb = 0	# tmp varible for minute blinking only
-
 #Main time display loop
 while True:
 	# Update display
-	wrdck.ckdisp(cur_time_min,cur_time_hr)
+	# the 'T' suffix is so the timewdr file knows this is a time rather than control display call
+	wrdck.ckdisp(cur_time_min,cur_time_hr,'T')
 	print "hr = ",cur_time_hr," mn = ",cur_time_min, " Max7219 brightness setting = ", Max_br, " Range 1 -", range
 
 	# Wait until minute changes before calling display update again
 	temp = cur_time_min
-
 	while cur_time_min == temp:
 		
 		# Autoset display brightness based on ambient light level
 	        Max_br = setbright(range)
-#		nblinks = cur_time_min % 5	# Number of blinks to indicate minute in 5 minute interval
-		t = 0
+
+		nblinks = cur_time_min % 5	# Number of blinks to indicate minute in 5 minute interval
+		blink = t = 0
 		# 10 sec delay with button check and minute blinking
 		while t < 100:
 			if t > 90 and int(datetime.now().strftime('%S')) % 10 == 0:
 				t = 99		# Synchronize on 10 sec interval
 			t = t + 1
-			# Flash PiZero board LED blinks options - note this does not work with a Pi3
-			if args.blink == 1:	# if blink = 1 flash once minute for 1/10 sec
-				if t % 10 == 0:
-					minb = minb +1
-					if minb == 60:
-						minb = 0
-	                                        GPIO.output(47,GPIO.LOW)
-        	                                sleep(.1)
-                	                        GPIO.output(47,GPIO.HIGH)
 
-			elif args.blink == 2:	# if blink = 2 flash once every 10 sec for 1/10 sec
+			# Flash PiZero board LED every second unless blink option = 2, then once every 20sec
+			if args.blink == 2:	# if blink = 2 flash once every 10 sec for 1/10 sec
 				if t == 100:
 					GPIO.output(47,GPIO.LOW)
 					sleep(0.1)
@@ -590,7 +578,7 @@ while True:
 						wrdck.ckdisp(cur_time_min,cur_time_hr,'A')	# Set astrix for positive feedback
 						sleep(.5)
 					Max_br = setbright(range)	# Set new brightness level
-					wrdck.ckdisp(cur_time_min,cur_time_hr)	# Clear astrix
+					wrdck.ckdisp(cur_time_min,cur_time_hr,'T')	# Clear astrix
 
 				elif GPIO.input(S3) == False:   # Increase range setting
                 	                range = range + 1
@@ -603,10 +591,10 @@ while True:
 						wrdck.ckdisp(cur_time_min,cur_time_hr,'A')	# Set astrix for positive feedback
                         	                sleep(.2)
                                 	Max_br = setbright(range)	# Set new brightness level
-					wrdck.ckdisp(cur_time_min,cur_time_hr)	# Clear astrix
+					wrdck.ckdisp(cur_time_min,cur_time_hr,'T')	# Clear astrix
 				print "range ", range
 				# Refresh the display
-			        wrdck.ckdisp(cur_time_min,cur_time_hr)
+			        wrdck.ckdisp(cur_time_min,cur_time_hr,'T')
 
 			sleep(.1)
 
