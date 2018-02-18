@@ -94,7 +94,7 @@ class DMS_wrdck:
 #                print mint, int(round(mint /5.0))	#debug only
 
 		# Increment 'hour' for > 30 mins past the hour
-		if min > 6 and hour != -1:	#except for special case when hour is inhibited
+		if min > 3 and hour != -1:	#except for special case when hour is inhibited
 			hour = hour +1
 			if hour == 24:
 				hour = 12
