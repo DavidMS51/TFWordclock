@@ -1,6 +1,7 @@
 # TFWordclock
 Repository for Tempus Fugit WordClock s/w and build instructions
 
+```
 Usage: Wordclockr5.py [-h] [-r count] [-b bklopt]  [{English,French,Dutch,German}]
  
 positional arguments:  
@@ -15,7 +16,7 @@ optional arguments:
                         blink - 0 = board act led only 1:1, 1 = minute
                         indication blinking (ignored for French), 2 = board
                         act led only 1:10, 3 = act led off (default: 0)  
-
+```
 
 Notes:
 
